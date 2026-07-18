@@ -67,4 +67,5 @@ giftLink?.addEventListener("click", (event) => {
   }, delay);
 });
 
-window.setTimeout(() => launchConfetti(36), reducedMotion ? 0 : 700);
+window.setTimeout(() => launchConfetti(72), reducedMotion ? 0 : 500);
+window.setTimeout(() => launchConfetti(44), reducedMotion ? 0 : 2100);
