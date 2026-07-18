@@ -4,6 +4,12 @@ const giftLink = document.querySelector("#gift-link");
 const giftCard = document.querySelector(".gift-card");
 const openingMessage = document.querySelector("#opening-message");
 const confettiLayer = document.querySelector("#confetti");
+const backgroundMusic = document.querySelector("#background-music");
+const musicToggle = document.querySelector("#music-toggle");
+const musicLabel = document.querySelector(".music-toggle__label");
+const surpriseLink = document.querySelector(".soft-button");
+const musicVolume = 0.42;
+let volumeFrame;
 
 if (reducedMotion || !("IntersectionObserver" in window)) {
   revealItems.forEach((item) => item.classList.add("is-visible"));
@@ -52,6 +58,73 @@ function launchConfetti(amount = 90) {
 
   confettiLayer.appendChild(fragment);
 }
+
+function updateMusicControl(isPlaying) {
+  if (!musicToggle || !musicLabel) return;
+
+  musicToggle.classList.toggle("is-playing", isPlaying);
+  musicToggle.setAttribute("aria-pressed", String(isPlaying));
+  musicToggle.setAttribute("aria-label", isPlaying ? "Pausar música" : "Reproducir música");
+  musicLabel.textContent = isPlaying ? "Pausar música" : "Poner música";
+}
+
+function fadeInMusic() {
+  if (!backgroundMusic) return;
+
+  window.cancelAnimationFrame(volumeFrame);
+  backgroundMusic.volume = 0;
+  const startedAt = performance.now();
+  const duration = 1800;
+
+  function raiseVolume(now) {
+    const progress = Math.min((now - startedAt) / duration, 1);
+    backgroundMusic.volume = musicVolume * progress;
+
+    if (progress < 1 && !backgroundMusic.paused) {
+      volumeFrame = window.requestAnimationFrame(raiseVolume);
+    }
+  }
+
+  volumeFrame = window.requestAnimationFrame(raiseVolume);
+}
+
+async function playMusic() {
+  if (!backgroundMusic) return;
+
+  try {
+    await backgroundMusic.play();
+    updateMusicControl(true);
+    fadeInMusic();
+  } catch {
+    updateMusicControl(false);
+  }
+}
+
+function pauseMusic() {
+  if (!backgroundMusic) return;
+
+  window.cancelAnimationFrame(volumeFrame);
+  backgroundMusic.pause();
+  updateMusicControl(false);
+}
+
+musicToggle?.addEventListener("click", () => {
+  if (backgroundMusic?.paused) {
+    playMusic();
+  } else {
+    pauseMusic();
+  }
+});
+
+surpriseLink?.addEventListener("click", () => {
+  if (backgroundMusic?.paused) playMusic();
+});
+
+backgroundMusic?.addEventListener("play", () => updateMusicControl(true));
+backgroundMusic?.addEventListener("pause", () => updateMusicControl(false));
+backgroundMusic?.addEventListener("error", () => {
+  if (musicToggle) musicToggle.hidden = true;
+});
 
 giftLink?.addEventListener("click", (event) => {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;

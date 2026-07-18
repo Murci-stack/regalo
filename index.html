@@ -48,6 +48,24 @@
 
     <div id="confetti" class="confetti" aria-hidden="true"></div>
 
+    <audio id="background-music" preload="metadata" loop>
+      <source src="assets/musica-para-mama.mp3" type="audio/mpeg" />
+    </audio>
+
+    <button
+      id="music-toggle"
+      class="music-toggle"
+      type="button"
+      aria-pressed="false"
+      aria-label="Reproducir música"
+    >
+      <span class="music-toggle__icon" aria-hidden="true">♫</span>
+      <span class="music-toggle__label">Poner música</span>
+      <span class="music-toggle__waves" aria-hidden="true">
+        <i></i><i></i><i></i>
+      </span>
+    </button>
+
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy reveal">
